@@ -5,9 +5,15 @@ from math import *
 from discord.ext import commands
 import openai
 import time
+from Bard import Chatbot
 
 load_dotenv("C_TOKEN")
 key = os.getenv("C_TOKEN")
+
+load_dotenv("B_TOKEN")
+b_token = os.getenv("B_TOKEN")
+bard_bot = Chatbot(b_token)
+
 
 openai.api_key = key
 
@@ -40,6 +46,10 @@ def chat(inp):
   messages.append(response.choices[0].message)
   return response.choices[0].message.content
 
+def bard_chat(inp):
+    resp = bard_bot.ask(inp)
+    return resp['content']
+
 # create intents
 intents = discord.Intents.default()
 intents.message_content = True
@@ -65,6 +75,10 @@ async def math(ctx, *, arg):
 @bot.command(help="Chatgpt answer")
 async def ai(ctx, *, arg):
     await ctx.send(chat(arg))
+    
+@bot.command(help="Bard answer")
+async def bard(ctx, *, arg):
+    await ctx.send(bard_chat(arg))
 
 bot.run(token)
 
